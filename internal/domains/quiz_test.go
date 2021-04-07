@@ -50,7 +50,7 @@ func TestQuiz_Change(t *testing.T) {
 			want: &Quiz{
 				ID:        1,
 				Title:     "test_title_1_update",
-				Content:   "test_content_1_update",
+				Question:  "test_question_1_update",
 				Answer:    "test_answer_1_update",
 				CreatedAt: createdAt,
 				UpdatedAt: updatedAt,
