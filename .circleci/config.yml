@@ -1,0 +1,14 @@
+version: 2.1
+jobs:  
+  build:
+    machine: true # docker-composeはDockerイメージ内では使えないためLinux仮想マシンイメージを指定
+    steps:
+      - checkout
+      - run:
+          name: setup docker-compose
+          command: |
+            docker-compose -f ./docker-compose.ci.yml up -d
+      - run:
+          name: run test on docker-compose
+          command: |
+            docker-compose -f ./docker-compose.ci.yml exec app make test
