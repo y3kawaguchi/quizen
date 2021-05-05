@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/y3kawaguchi/quizen/internal/db"
 	"github.com/y3kawaguchi/quizen/internal/domains"
 	"github.com/y3kawaguchi/quizen/pkg/location"
@@ -33,10 +34,10 @@ func (a *QuizRepository) FindAll() (*domains.Quizzes, error) {
 	}
 	defer rows.Close()
 
-	fmt.Printf("rows: %#v\n", rows)
-
 	quizzes := domains.QuizzesNew()
 	for rows.Next() {
+		fmt.Printf("rows: %#v\n", rows)
+
 		item := domains.Quiz{}
 		err := rows.Scan(
 			&item.ID,
@@ -78,7 +79,7 @@ func (q *QuizRepository) FindByID(id int64) (*domains.Quiz, error) {
 	)
 	if err != nil {
 		// TODO: nilを返すのが適切か考える
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	// fmt.Printf("QuizRepository.FindByID(): %#v\n", item)
@@ -87,6 +88,31 @@ func (q *QuizRepository) FindByID(id int64) (*domains.Quiz, error) {
 	item.UpdatedAt = item.UpdatedAt.In(location.JP())
 
 	return &item, nil
+}
+
+// GetChoicesByQuizID ...
+func (q *QuizRepository) GetChoicesByQuizID(quizId int64) ([]string, error) {
+	db := q.connection.GetDB()
+
+	query := `SELECT content FROM choices WHERE quiz_id = $1`
+	rows, err := db.Query(query, quizId)
+	if err != nil {
+		// TODO: nilを返すのが適切か考える
+		return []string{}, errors.WithStack(err)
+	}
+	defer rows.Close()
+
+	choices := make([]string, 0)
+	for rows.Next() {
+		var choice string
+		err := rows.Scan(&choice)
+		if err != nil {
+			return []string{}, errors.WithStack(err)
+		}
+		choices = append(choices, choice)
+	}
+
+	return choices, nil
 }
 
 // Save ...

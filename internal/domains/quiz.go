@@ -7,6 +7,7 @@ type Quiz struct {
 	ID        int64
 	Title     string
 	Question  string
+	Choices   []string
 	Answer    string
 	CreatedAt time.Time
 	UpdatedAt time.Time
@@ -38,6 +39,7 @@ func (q *Quiz) Change(item Quiz) *Quiz {
 		ID:        q.ID,
 		Title:     item.Title,
 		Question:  item.Question,
+		Choices:   item.Choices,
 		Answer:    item.Answer,
 		CreatedAt: q.CreatedAt,
 		UpdatedAt: q.UpdatedAt,

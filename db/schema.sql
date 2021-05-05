@@ -17,7 +17,14 @@ CREATE SEQUENCE quizzes_id_seq
 
 ALTER TABLE ONLY quizzes ALTER COLUMN id SET DEFAULT nextval('quizzes_id_seq'::regclass);
 
-
+CREATE TABLE IF NOT EXISTS choices (
+  quiz_id bigint NOT NULL,
+  choice_id smallint NOT NULL,
+  content character varying NOT NULL,
+  created_at timestamp with time zone NOT NULL,
+  updated_at timestamp with time zone NOT NULL,
+  PRIMARY KEY (quiz_id, choice_id)
+);
 
 CREATE TABLE IF NOT EXISTS users (
   id bigint NOT NULL,

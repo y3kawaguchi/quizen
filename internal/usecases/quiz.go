@@ -26,9 +26,25 @@ func (q *QuizUsecase) Create(quiz *domains.Quiz) (int64, error) {
 }
 
 // Get ...
-func (q *QuizUsecase) Get() (*domains.Quizzes, error) {
+func (q *QuizUsecase) Get(quizId int64) (*domains.Quiz, error) {
+	quiz, err := q.repository.FindByID(quizId)
+	if err != nil {
+		return quiz, err
+	}
+
+	choices, err := q.repository.GetChoicesByQuizID(quiz.ID)
+	if err != nil {
+		return quiz, err
+	}
+	quiz.Choices = choices
+
+	return quiz, nil
+}
+
+// Search ...
+func (q *QuizUsecase) Search() (*domains.Quizzes, error) {
 	quizzes, err := q.repository.FindAll()
-	fmt.Printf("QuizUsecase.Get(): %#v\n", quizzes)
+	fmt.Printf("QuizUsecase.Search(): %#v\n", quizzes)
 	return quizzes, err
 }
 

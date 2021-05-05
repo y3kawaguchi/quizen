@@ -14,7 +14,8 @@ import (
 // Quiz ...
 type Quiz interface {
 	Create(quiz *domains.Quiz) (int64, error)
-	Get() (*domains.Quizzes, error)
+	Get(quizId int64) (*domains.Quiz, error)
+	Search() (*domains.Quizzes, error)
 	Update(quiz *domains.Quiz) (int64, error)
 }
 
@@ -30,10 +31,28 @@ func NewQuizAPI(quiz Quiz) *QuizAPI {
 	}
 }
 
+// QuizGet ...
+func (q QuizAPI) QuizGet() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("quiz_id"), 10, 64)
+		if err != nil {
+			newErr := fmt.Errorf(`Invalid param "quiz_id": %s`, c.Param("quiz_id"))
+			c.Error(newErr).SetMeta(http.StatusNotFound)
+			return
+		}
+		result, err := q.quiz.Get(id)
+		if err != nil {
+			c.Error(err).SetMeta(http.StatusInternalServerError)
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
+}
+
 // QuizzesGet ...
 func (q QuizAPI) QuizzesGet() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result, err := q.quiz.Get()
+		result, err := q.quiz.Search()
 		if err != nil {
 			c.Error(err).SetMeta(http.StatusInternalServerError)
 			return

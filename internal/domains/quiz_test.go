@@ -14,6 +14,7 @@ func TestQuiz_Change(t *testing.T) {
 		ID        int64
 		Title     string
 		Question  string
+		Choices   []string
 		Answer    string
 		CreatedAt time.Time
 		UpdatedAt time.Time
@@ -28,29 +29,47 @@ func TestQuiz_Change(t *testing.T) {
 		want   *Quiz
 	}{
 		{
-			name: "change title and question and answer",
+			name: "change title and question and choices and answer",
 			fields: fields{
-				ID:        1,
-				Title:     "test_title_1",
-				Question:  "test_question_1",
+				ID:       1,
+				Title:    "test_title_1",
+				Question: "test_question_1",
+				Choices: []string{
+					"test_choices1",
+					"test_choices2",
+					"test_choices3",
+					"test_choices4",
+				},
 				Answer:    "test_answer_1",
 				CreatedAt: createdAt,
 				UpdatedAt: updatedAt,
 			},
 			args: args{
 				item: Quiz{
-					ID:        1,
-					Title:     "test_title_1_update",
-					Question:  "test_question_1_update",
+					ID:       1,
+					Title:    "test_title_1_update",
+					Question: "test_question_1_update",
+					Choices: []string{
+						"test_choices1_update",
+						"test_choices2_update",
+						"test_choices3_update",
+						"test_choices4_update",
+					},
 					Answer:    "test_answer_1_update",
 					CreatedAt: createdAt,
 					UpdatedAt: updatedAt,
 				},
 			},
 			want: &Quiz{
-				ID:        1,
-				Title:     "test_title_1_update",
-				Question:  "test_question_1_update",
+				ID:       1,
+				Title:    "test_title_1_update",
+				Question: "test_question_1_update",
+				Choices: []string{
+					"test_choices1_update",
+					"test_choices2_update",
+					"test_choices3_update",
+					"test_choices4_update",
+				},
 				Answer:    "test_answer_1_update",
 				CreatedAt: createdAt,
 				UpdatedAt: updatedAt,
@@ -63,6 +82,7 @@ func TestQuiz_Change(t *testing.T) {
 				ID:        tt.fields.ID,
 				Title:     tt.fields.Title,
 				Question:  tt.fields.Question,
+				Choices:   tt.fields.Choices,
 				Answer:    tt.fields.Answer,
 				CreatedAt: tt.fields.CreatedAt,
 				UpdatedAt: tt.fields.UpdatedAt,
