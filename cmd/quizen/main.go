@@ -72,6 +72,7 @@ func main() {
 		MaxAge: 24 * time.Hour,
 	}))
 
+	r.GET("/quizzes/:quiz_id", quizAPI.QuizGet())
 	r.GET("/quizzes", quizAPI.QuizzesGet())
 	r.POST("/quizzes", quizAPI.QuizPost())
 	r.PUT("/quizzes/:quiz_id", quizAPI.QuizPut())

@@ -8,4 +8,5 @@ require (
 	github.com/google/go-cmp v0.5.2
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.8.0
+	github.com/pkg/errors v0.9.1
 )
