@@ -57,7 +57,7 @@ func (q QuizAPI) QuizzesGet() gin.HandlerFunc {
 			c.Error(err).SetMeta(http.StatusInternalServerError)
 			return
 		}
-		c.JSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, result.Items)
 	}
 }
 
