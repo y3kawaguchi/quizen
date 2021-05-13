@@ -4,13 +4,13 @@ import "time"
 
 // Quiz ...
 type Quiz struct {
-	ID        int64     `json:"id"`
-	Title     string    `json:"title"`
-	Question  string    `json:"question"`
-	Choices   []string  `json:"choices"`
-	Answer    string    `json:"answer"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          int64     `json:"id"`
+	Title       string    `json:"title"`
+	Question    string    `json:"question"`
+	Choices     []Choice  `json:"choices"`
+	Explanation string    `json:"explanation"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // Quizzes ...
@@ -36,12 +36,12 @@ func (q *Quizzes) GetAll() []Quiz {
 // Change ...
 func (q *Quiz) Change(item Quiz) *Quiz {
 	return &Quiz{
-		ID:        q.ID,
-		Title:     item.Title,
-		Question:  item.Question,
-		Choices:   item.Choices,
-		Answer:    item.Answer,
-		CreatedAt: q.CreatedAt,
-		UpdatedAt: q.UpdatedAt,
+		ID:          q.ID,
+		Title:       item.Title,
+		Question:    item.Question,
+		Choices:     item.Choices,
+		Explanation: item.Explanation,
+		CreatedAt:   q.CreatedAt,
+		UpdatedAt:   q.UpdatedAt,
 	}
 }

@@ -1,12 +1,12 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 	"strconv"
 
 	// github.com/lib/pq ...
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -24,11 +24,11 @@ type PostgreSQLConfig struct {
 
 // PostgreSQLConnection ...
 type PostgreSQLConnection struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
 // GetDB ...
-func (c *PostgreSQLConnection) GetDB() *sql.DB {
+func (c *PostgreSQLConnection) GetDB() *sqlx.DB {
 	return c.DB
 }
 
@@ -56,7 +56,7 @@ func GetPostgreSQLConfigFromEnv() (*PostgreSQLConfig, error) {
 // ConnectPostgreSQL ...
 func ConnectPostgreSQL(c *PostgreSQLConfig) (Connection, error) {
 	dataSourceName := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", c.Host, c.Port, c.User, c.Password, c.DBName, c.SslMode)
-	db, err := sql.Open(postgreSQLDriverName, dataSourceName)
+	db, err := sqlx.Open(postgreSQLDriverName, dataSourceName)
 	if err != nil {
 		return nil, err
 	}

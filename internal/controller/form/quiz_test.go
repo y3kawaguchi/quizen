@@ -56,6 +56,28 @@ func buildDefaultQuiz() *domains.Quiz {
 	return &domains.Quiz{
 		Title:    "TestTitle",
 		Question: "TestQuestion",
-		Answer:   "TestAnswer",
+		Choices: []domains.Choice{
+			{
+				ChoiceID:  1,
+				Content:   "TestChoiceContent1",
+				IsCorrect: false,
+			},
+			{
+				ChoiceID:  2,
+				Content:   "TestChoiceContent2",
+				IsCorrect: false,
+			},
+			{
+				ChoiceID:  3,
+				Content:   "TestChoiceContent3",
+				IsCorrect: true,
+			},
+			{
+				ChoiceID:  4,
+				Content:   "TestChoiceContent4",
+				IsCorrect: false,
+			},
+		},
+		Explanation: "TestExplanation",
 	}
 }

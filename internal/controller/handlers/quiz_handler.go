@@ -62,9 +62,9 @@ func (q QuizAPI) QuizzesGet() gin.HandlerFunc {
 }
 
 type quizPostRequest struct {
-	Title    string `json:"title" binding:"required"`
-	Question string `json:"question" binding:"required"`
-	Answer   string `json:"answer" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Question    string `json:"question" binding:"required"`
+	Explanation string `json:"explanation" binding:"required"`
 }
 
 // QuizPost ...
@@ -76,12 +76,12 @@ func (q QuizAPI) QuizPost() gin.HandlerFunc {
 			return
 		}
 		quiz := f.BuildDomain()
-		_, err := q.quiz.Create(quiz)
+		quizId, err := q.quiz.Create(quiz)
 		if err != nil {
 			fmt.Printf("error: %#v\n", err)
 			c.Error(err).SetMeta(http.StatusInternalServerError)
 		} else {
-			c.Status(http.StatusNoContent)
+			c.JSON(http.StatusCreated, gin.H{"quiz_id": quizId})
 		}
 	}
 }

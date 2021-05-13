@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,12 +8,13 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"github.com/y3kawaguchi/quizen/internal/db"
 	"github.com/y3kawaguchi/quizen/internal/domains"
 )
 
-var sqldb *sql.DB
+var sqldb *sqlx.DB
 var repo *QuizRepository
 
 func setup() {
@@ -31,13 +31,13 @@ func setup() {
 	query := `INSERT INTO quizzes(
 		title,
 		question,
-		answer,
+		explanation,
 		created_at,
 		updated_at
 	) VALUES
-		('test_title_1', 'test_question_1', 'test_answer_1', $1, $2),
-		('test_title_2', 'test_question_2', 'test_answer_2', $3, $4),
-		('test_title_3', 'test_question_3', 'test_answer_3', $5, $6);
+		('test_title_1', 'test_question_1', 'test_explanation_1', $1, $2),
+		('test_title_2', 'test_question_2', 'test_explanation_2', $3, $4),
+		('test_title_3', 'test_question_3', 'test_explanation_3', $5, $6);
 	`
 
 	if _, err := sqldb.Exec(query, t1, t2, t3, t4, t5, t6); err != nil {
@@ -104,12 +104,12 @@ func TestQuizRepository_FindByID(t *testing.T) {
 				id: 1,
 			},
 			want: &domains.Quiz{
-				ID:        1,
-				Title:     "test_title_1",
-				Question:  "test_question_1",
-				Answer:    "test_answer_1",
-				CreatedAt: createdAt,
-				UpdatedAt: updatedAt,
+				ID:          1,
+				Title:       "test_title_1",
+				Question:    "test_question_1",
+				Explanation: "test_explanation_1",
+				CreatedAt:   createdAt,
+				UpdatedAt:   updatedAt,
 			},
 			wantErr: false,
 		},
@@ -146,12 +146,12 @@ func TestQuizRepository_Update(t *testing.T) {
 			name: "update quiz and return zero",
 			args: args{
 				quiz: &domains.Quiz{
-					ID:        1,
-					Title:     "test_title_1_update",
-					Question:  "test_question_1_update",
-					Answer:    "test_answer_1_update",
-					CreatedAt: createdAt,
-					UpdatedAt: updatedAt,
+					ID:          1,
+					Title:       "test_title_1_update",
+					Question:    "test_question_1_update",
+					Explanation: "test_explanation_1_update",
+					CreatedAt:   createdAt,
+					UpdatedAt:   updatedAt,
 				},
 			},
 			want:    0,

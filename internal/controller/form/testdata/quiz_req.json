@@ -1,5 +1,7 @@
 {
   "title":"TestTitle",
   "question":"TestQuestion",
-  "answer":"TestAnswer"
+  "explanation":"TestExplanation",
+  "choice_contents":["TestChoiceContent1","TestChoiceContent2","TestChoiceContent3","TestChoiceContent4"],
+  "choice_is_corrects":[false,false,true,false]
 }
