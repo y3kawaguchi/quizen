@@ -2,25 +2,24 @@ CREATE TABLE IF NOT EXISTS quizzes (
   id bigint NOT NULL,
   title character varying NOT NULL,
   question character varying NOT NULL,
-  answer character varying NOT NULL,
+  explanation character varying NOT NULL,
   created_at timestamp with time zone NOT NULL,
   updated_at timestamp with time zone NOT NULL,
   PRIMARY KEY (id)
 );
-
 CREATE SEQUENCE quizzes_id_seq
   START WITH 1
   INCREMENT BY 1
   NO MINVALUE
   NO MAXVALUE
   CACHE 1;
-
 ALTER TABLE ONLY quizzes ALTER COLUMN id SET DEFAULT nextval('quizzes_id_seq'::regclass);
 
 CREATE TABLE IF NOT EXISTS choices (
   quiz_id bigint NOT NULL,
   choice_id smallint NOT NULL,
   content character varying NOT NULL,
+  is_correct boolean NOT NULL,
   created_at timestamp with time zone NOT NULL,
   updated_at timestamp with time zone NOT NULL,
   PRIMARY KEY (quiz_id, choice_id)
@@ -35,7 +34,6 @@ CREATE TABLE IF NOT EXISTS users (
   deleted_at timestamp with time zone,
   PRIMARY KEY (id)
 );
-
 CREATE SEQUENCE users_id_seq
   START WITH 1
   INCREMENT BY 1

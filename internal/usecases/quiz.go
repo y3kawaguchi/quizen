@@ -22,7 +22,20 @@ func NewQuizUsecase(repository *repositories.QuizRepository) *QuizUsecase {
 
 // Create ...
 func (q *QuizUsecase) Create(quiz *domains.Quiz) (int64, error) {
-	return q.repository.Save(quiz)
+	quizId, err := q.repository.Save(quiz)
+	if err != nil {
+		return -1, err
+	}
+
+	for _, choice := range quiz.Choices {
+		choice.QuizID = quizId
+		q.repository.SaveChoice(&choice)
+		if err != nil {
+			return -1, err
+		}
+	}
+
+	return quizId, nil
 }
 
 // Get ...

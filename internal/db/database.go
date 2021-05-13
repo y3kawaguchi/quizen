@@ -1,11 +1,11 @@
 package db
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 )
 
 // Connection ...
 type Connection interface {
-	GetDB() *sql.DB
+	GetDB() *sqlx.DB
 	Close() error
 }

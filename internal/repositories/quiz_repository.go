@@ -43,7 +43,7 @@ func (a *QuizRepository) FindAll() (*domains.Quizzes, error) {
 			&item.ID,
 			&item.Title,
 			&item.Question,
-			&item.Answer,
+			&item.Explanation,
 			&item.CreatedAt,
 			&item.UpdatedAt,
 		)
@@ -73,7 +73,7 @@ func (q *QuizRepository) FindByID(id int64) (*domains.Quiz, error) {
 		&item.ID,
 		&item.Title,
 		&item.Question,
-		&item.Answer,
+		&item.Explanation,
 		&item.CreatedAt,
 		&item.UpdatedAt,
 	)
@@ -91,23 +91,23 @@ func (q *QuizRepository) FindByID(id int64) (*domains.Quiz, error) {
 }
 
 // GetChoicesByQuizID ...
-func (q *QuizRepository) GetChoicesByQuizID(quizId int64) ([]string, error) {
+func (q *QuizRepository) GetChoicesByQuizID(quizId int64) ([]domains.Choice, error) {
 	db := q.connection.GetDB()
 
-	query := `SELECT content FROM choices WHERE quiz_id = $1`
-	rows, err := db.Query(query, quizId)
+	query := `SELECT * FROM choices WHERE quiz_id = $1`
+	rows, err := db.Queryx(query, quizId)
 	if err != nil {
 		// TODO: nilを返すのが適切か考える
-		return []string{}, errors.WithStack(err)
+		return []domains.Choice{}, errors.WithStack(err)
 	}
 	defer rows.Close()
 
-	choices := make([]string, 0)
+	choices := make([]domains.Choice, 0)
 	for rows.Next() {
-		var choice string
-		err := rows.Scan(&choice)
+		var choice domains.Choice
+		err := rows.StructScan(&choice)
 		if err != nil {
-			return []string{}, errors.WithStack(err)
+			return []domains.Choice{}, errors.WithStack(err)
 		}
 		choices = append(choices, choice)
 	}
@@ -119,11 +119,11 @@ func (q *QuizRepository) GetChoicesByQuizID(quizId int64) ([]string, error) {
 func (q *QuizRepository) Save(quiz *domains.Quiz) (int64, error) {
 	now := time.Now()
 
-	_, err := q.connection.GetDB().Exec(`INSERT INTO quizzes
+	row, err := q.connection.GetDB().Query(`INSERT INTO quizzes
 		(
 			title,
 			question,
-			answer,
+			explanation,
 			created_at,
 			updated_at
 		) VALUES (
@@ -132,10 +132,50 @@ func (q *QuizRepository) Save(quiz *domains.Quiz) (int64, error) {
 			$3,
 			$4,
 			$5
-		)`,
+		) RETURNING id`,
 		quiz.Title,
 		quiz.Question,
-		quiz.Answer,
+		quiz.Explanation,
+		now,
+		now,
+	)
+	if err != nil {
+		return -1, err
+	}
+	defer row.Close()
+
+	row.Next()
+	if err := row.Scan(&quiz.ID); err != nil {
+		return -1, err
+	}
+
+	return quiz.ID, nil
+}
+
+// SaveChoice ...
+func (q *QuizRepository) SaveChoice(choice *domains.Choice) (int64, error) {
+	now := time.Now()
+
+	_, err := q.connection.GetDB().Exec(`INSERT INTO choices
+		(
+			quiz_id,
+			choice_id,
+			content,
+			is_correct,
+			created_at,
+			updated_at
+		) VALUES (
+			$1,
+			$2,
+			$3,
+			$4,
+			$5,
+			$6
+		)`,
+		choice.QuizID,
+		choice.ChoiceID,
+		choice.Content,
+		choice.IsCorrect,
 		now,
 		now,
 	)
@@ -143,7 +183,7 @@ func (q *QuizRepository) Save(quiz *domains.Quiz) (int64, error) {
 		return -1, err
 	}
 
-	return 0, err
+	return 0, nil
 }
 
 // Update ...
@@ -155,12 +195,12 @@ func (q *QuizRepository) Update(quiz *domains.Quiz) (int64, error) {
 			SET
 				title = $1,
 				question = $2,
-				answer = $3,
+				explanation = $3,
 				updated_at = $4
 			WHERE id = $5`,
 		quiz.Title,
 		quiz.Question,
-		quiz.Answer,
+		quiz.Explanation,
 		now,
 		quiz.ID,
 	)
