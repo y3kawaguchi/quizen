@@ -1,5 +1,7 @@
 # quizen
 
+[![y3kawaguchi](https://circleci.com/gh/y3kawaguchi/quizen.svg?style=shield)](https://circleci.com/gh/y3kawaguchi/quizen)
+
 Quiz app backend
 
 ## Prerequirement
